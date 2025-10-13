@@ -2,15 +2,11 @@
   import { fly, fade } from "svelte/transition";
   export let show = false;
   export let orderDetails = {};
-  export let loading = false; // Show loader first
+  export let isLoading = false; // Show loader first
 
 
    function goHome() {
-    // Clear cart
-    localStorage.removeItem("cartItems");
 
-
-    localStorage.removeItem("checkoutForm");
 
     // Redirect to homepage
     window.location.href = "/";
@@ -25,7 +21,7 @@
       in:fly={{ y: 100, duration: 400 }}
       out:fly={{ y: -100, duration: 300 }}
     >
-      {#if loading}
+      {#if isLoading}
         <!-- Loader -->
         <div class="flex flex-col items-center justify-center py-10">
           <svg

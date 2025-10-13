@@ -6,9 +6,10 @@
 	import Bloodlust from '$lib/assets/Blood lust.webp';
 	import Brand from '$lib/assets/brand.webp';
 	import Sunset from '$lib/assets/Sunset.webp';
+	import { client, urlFor } from '$lib/sanity';
 
-	// Example gallery data (each item has multiple images)
-	let albums = [
+	// Static albums from your local assets
+	let staticAlbums = [
 		{
 			cover: '/assets/Do you miss me like I miss you.webp',
 			images: [
@@ -188,8 +189,62 @@
 		}
 	];
 
+	let albums = staticAlbums; // Start with static albums
 	let currentAlbum = null;
 	let currentIndex = 0;
+	let loading = true;
+
+	// Fetch albums from Sanity
+	onMount(async () => {
+		try {
+			console.log('🔄 Fetching albums from Sanity...');
+
+			const data = await client.fetch(`*[_type == "album"]{
+				title,
+				coverImage,
+				gallery
+			}`);
+
+			console.log('📦 Raw Sanity data:', data);
+
+			if (data && data.length > 0) {
+				// Transform Sanity albums
+				const sanityAlbums = data.map(album => {
+					console.log('Processing album:', album.title);
+					return {
+						title: album.title,
+						cover: album.coverImage ? urlFor(album.coverImage).width(800).url() : '',
+						images: album.gallery?.map(img => urlFor(img).width(1200).url()) || []
+					};
+				});
+
+				// Combine with static albums
+				albums = [...staticAlbums, ...sanityAlbums];
+
+				console.log('✅ Success! Total albums:', albums.length);
+				console.log('📊 Static:', staticAlbums.length, '+ Sanity:', sanityAlbums.length);
+			} else {
+				console.log('⚠️ No albums found in Sanity');
+			}
+
+		} catch (error) {
+			console.error('❌ Error fetching from Sanity:', error);
+			console.error('Error details:', error.message);
+		} finally {
+			loading = false;
+		}
+
+		// Keyboard navigation
+		if (browser) {
+			window.addEventListener('keydown', handleKey);
+		}
+	});
+
+	onDestroy(() => {
+		if (browser) {
+			window.removeEventListener('keydown', handleKey);
+		}
+	});
 
 	function openLightbox(albumIndex) {
 		currentAlbum = albums[albumIndex];
@@ -213,23 +268,12 @@
 		}
 	}
 
-	// Keyboard navigation
 	function handleKey(e) {
 		if (currentAlbum) {
 			if (e.key === 'ArrowLeft') prevImage();
 			if (e.key === 'ArrowRight') nextImage();
 			if (e.key === 'Escape') closeLightbox();
 		}
-	}
-
-	if (browser) {
-		onMount(() => {
-			window.addEventListener('keydown', handleKey);
-		});
-
-		onDestroy(() => {
-			window.removeEventListener('keydown', handleKey);
-		});
 	}
 </script>
 
@@ -256,7 +300,7 @@
 	</div>
 </section> -->
 <section
-	class="relative z-10  flex h-[750px] flex-col items-center justify-center gap-10 bg-[url('/src/lib/assets/Sunset.webp')] bg-cover bg-center bg-no-repeat text-center "
+	class="relative z-10 flex h-[750px] flex-col items-center justify-center gap-10 bg-[url('/src/lib/assets/Sunset.webp')] bg-cover bg-center bg-no-repeat text-center"
 >
 	<!-- Overlay -->
 	<div class="absolute inset-0 bg-black/70"></div>

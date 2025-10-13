@@ -3,9 +3,41 @@
 	import DarkTribe from '$lib/assets/Dark-tribe.webp';
 	import ImageCarousel from '../../components/ImageCarousel.svelte';
 	import LastChapter from '$lib/assets/Last Chapter.webp';
+
+	import { client } from '$lib/sanity';
+	import { onMount } from 'svelte';
+
+	let testimonials = [];
+	let loading = true;
+
+	onMount(async () => {
+		try {
+			// Fetch testimonials from Sanity
+			const data = await client.fetch(`*[_type == "testimonial"] | order(_createdAt desc) {
+				_id,
+				name,
+				role,
+				message
+			}`);
+
+			testimonials = data.map(item => ({
+				id: item._id,
+				name: item.name,
+				role: item.role,
+				message: item.message
+			}));
+		} catch (error) {
+			console.error('Error fetching testimonials:', error);
+		} finally {
+			loading = false;
+		}
+	});
+
 </script>
 
 <main class="flex flex-col gap-y-10 px-5 py-20 lg:px-20">
+
+	<!-- -===================================hero======================== -->
 	<section class="flex flex-col gap-20">
 		<div class="grid grid-cols-1 items-end gap-8 md:grid-cols-2 lg:gap-20">
 			<div class="flex flex-col gap-10">
@@ -58,11 +90,15 @@
 			</div>
 		</div>
 	</section>
+
+	<!--=============================== my Philosophy================================ -->
 	<section
 		class="mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-8 py-20 md:grid-cols-2 lg:gap-20"
 	>
 		<div>
-			<h2 class="pb-5 text-[30px] tracking-tight lg:text-[45px] font-semibold lg:tracking-wide text-[#b8d6ee]">
+			<h2
+				class="pb-5 text-[30px] font-semibold tracking-tight text-[#b8d6ee] lg:text-[45px] lg:tracking-wide"
+			>
 				My Philosophy
 			</h2>
 			<p class="pb-5 text-[20px] lg:pb-10">
@@ -84,9 +120,11 @@
 			<img src={LastChapter} alt="Last Chapter" class="h-full w-full object-contain" />
 		</div>
 	</section>
+
+	<!-- ==========================latest photography========================== -->
 	<section class="-mx-5 flex flex-col gap-5 lg:-mx-20 lg:gap-20">
 		<div>
-			<h2 class="text-center text-[35px] capitalize lg:text-[54px] text-[#b8d6ee] font-semibold">
+			<h2 class="text-center text-[35px] font-semibold text-[#b8d6ee] capitalize lg:text-[54px]">
 				Latest Photography
 			</h2>
 			<p class="mx-auto max-w-[600px] pt-3 text-center text-[20px]">
@@ -96,66 +134,35 @@
 		</div>
 		<ImageCarousel />
 	</section>
-	<section class=" py-16">
-	<div class="max-w-[1200px] mx-auto px-6">
-		<h2 class="text-center text-[35px] capitalize lg:text-[54px] text-[#b8d6ee] font-semibold pb-5">What People Say</h2>
 
-		<div class="flex space-x-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-10">
-			<!-- Testimonial 1 -->
-			<div class="flex-none w-[350px] snap-start bg-black rounded-2xl shadow-md p-6 hover:shadow-xl transition">
-				<p class="text-white mb-4">
-					"EzerGallery captured something I never knew could be seen in me. The photos felt alive, like they were telling my story."
-				</p>
-				<h3 class="font-semibold text-lg text-[#306b86]">— Sarah A.</h3>
-				<p class="text-sm text-gray-500">Creative Director</p>
-			</div>
+	<!-- =======================testimonials===================================== -->
+	<section class="py-16">
+	<div class="mx-auto max-w-[1200px] px-6">
+		<h2 class="pb-5 text-center text-[35px] font-semibold text-[#b8d6ee] capitalize lg:text-[54px]">
+			What People Say
+		</h2>
 
-			<!-- Testimonial 2 -->
-			<div class="flex-none w-[350px] snap-start bg-black rounded-2xl shadow-md p-6 hover:shadow-xl transition">
-				<p class="text-white mb-4">
-					"The energy during the session was calm and authentic. I could just be myself, and that came through perfectly in the shots."
-				</p>
-				<h3 class="font-semibold text-lg text-[#306b86]">— Daniel K.</h3>
-				<p class="text-sm text-gray-500">Musician</p>
+		{#if loading}
+			<div class="text-center py-20">
+				<p class="text-xl text-gray-400">Loading testimonials...</p>
 			</div>
-
-			<!-- Testimonial 3 -->
-			<div class="flex-none w-[350px] snap-start bg-black rounded-2xl shadow-md p-6 hover:shadow-xl transition">
-				<p class="text-white mb-4">
-					"There is an honesty in the work that goes beyond photography. It felt like therapy through the lens."
-				</p>
-				<h3 class="font-semibold text-lg text-[#306b86]">— Joy E.</h3>
-				<p class="text-sm text-gray-500">Writer</p>
+		{:else if testimonials.length === 0}
+			<div class="text-center py-20">
+				<p class="text-xl text-gray-400">No testimonials found.</p>
 			</div>
-
-			<!-- Testimonial 4 -->
-			<div class="flex-none w-[350px] snap-start bg-black rounded-2xl shadow-md p-6 hover:shadow-xl transition">
-				<p class="text-white mb-4">
-					"Every frame carries emotion and purpose. It’s rare to see such sincerity and vision combined."
-				</p>
-				<h3 class="font-semibold text-lg text-[#306b86]">— Michael O.</h3>
-				<p class="text-sm text-gray-500">Art Curator</p>
+		{:else}
+			<div class="scrollbar-hide flex snap-x snap-mandatory space-x-6 overflow-x-auto py-10">
+				{#each testimonials as t}
+					<div
+						class="w-[350px] flex-none snap-start rounded-2xl bg-black p-6 shadow-md transition hover:shadow-xl"
+					>
+						<p class="mb-4 text-white">"{t.message}"</p>
+						<h3 class="text-lg font-semibold text-[#306b86]">— {t.name}</h3>
+						<p class="text-sm text-gray-500">{t.role}</p>
+					</div>
+				{/each}
 			</div>
-
-			<!-- Testimonial 5 -->
-			<div class="flex-none w-[350px] snap-start bg-black rounded-2xl shadow-md p-6 hover:shadow-xl transition">
-				<p class="text-white mb-4">
-					"EzerGallery helped me reconnect with parts of myself I thought were gone. The photos remind me of my strength."
-				</p>
-				<h3 class="font-semibold text-lg text-[#306b86]">— Anita B.</h3>
-				<p class="text-sm text-gray-500">Model</p>
-			</div>
-
-			<!-- Testimonial 6 -->
-			<div class="flex-none w-[350px] snap-start bg-black rounded-2xl shadow-md p-6 hover:shadow-xl transition">
-				<p class="text-white mb-4">
-					"The images are pure emotion. I look at them and feel something new every time. That is real art."
-				</p>
-				<h3 class="font-semibold text-lg text-[#306b86]">— Tunde F.</h3>
-				<p class="text-sm text-gray-500">Film Director</p>
-			</div>
-		</div>
+		{/if}
 	</div>
 </section>
-
 </main>

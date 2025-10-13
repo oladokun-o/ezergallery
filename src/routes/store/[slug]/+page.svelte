@@ -1,13 +1,68 @@
 <script>
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import { products } from '$lib/stores/products';
 	import { get } from 'svelte/store';
+	import { client, urlFor } from '$lib/sanity';
 	import { addToCart, cartItems, isCartOpen } from '$lib/stores/cartStore';
-	import { toast } from '$lib/stores/toastStore';
 	import { showAddedToCart, showAlreadyInCart } from '$lib/stores/toastStore';
-	export let params;
 
-	let product = get(products).find((p) => p.slug === params.slug);
+	let product = null;
+	let loading = true;
 	let quantity = 1;
+
+	// Get slug from URL
+	$: slug = $page.params.slug;
+
+	onMount(async () => {
+		try {
+			// First, try to find in static products
+			const staticProducts = get(products);
+			const staticProduct = staticProducts.find((p) => p.slug === slug);
+
+			if (staticProduct) {
+				product = staticProduct;
+				console.log('✅ Found static product:', product.title);
+				loading = false;
+				return;
+			}
+
+			// If not found in static, try Sanity
+			const data = await client.fetch(
+				`*[_type == "product" && slug.current == $slug][0] {
+					_id,
+					title,
+					"slug": slug.current,
+					price,
+					image,
+					description,
+					size,
+					material,
+					availability
+				}`,
+				{ slug }
+			);
+
+			if (data) {
+				product = {
+					...data,
+					id: data._id,
+					image: data.image ? urlFor(data.image).width(1200).url() : '',
+					details: {
+						size: data.size || 'N/A',
+						material: data.material || 'N/A',
+						availability: data.availability || 'In Stock'
+					}
+				};
+				console.log('✅ Found Sanity product:', product.title);
+			}
+
+		} catch (error) {
+			console.error('❌ Error loading product:', error);
+		} finally {
+			loading = false;
+		}
+	});
 
 	function increase() {
 		quantity += 1;
@@ -33,34 +88,34 @@
 		}
 	}
 
-	// --- Add to cart logic ---
 	function handleAddToCart() {
-		// check if already in cart
 		const exists = get(cartItems).find((i) => i.id === product.id);
 
-
 		if (exists) {
-			showAlreadyInCart(product); // ✅ red toast with image + message
+			showAlreadyInCart(product);
 		} else {
-			// add with selected quantity
 			for (let i = 0; i < quantity; i++) {
 				addToCart(product);
 			}
-			showAddedToCart(product); // ✅ green toast with image + message
+			showAddedToCart(product);
 		}
 
-
-		// open sidebar
 		isCartOpen.set(true);
 	}
 </script>
 
-{#if product}
+{#if loading}
+	<div class="flex min-h-screen items-center justify-center">
+		<p class="text-2xl">Loading product...</p>
+	</div>
+{:else if product}
 	<p class="mx-auto mt-20 max-w-[1300px] cursor-pointer py-5 px-8 hover:text-[#306b86] transition duration-500">
-		<a href="/store" class="flex gap-3 items-center"><span class="rotate-270 font-bold text-xl">↑</span>Back</a>
+		<a href="/store" class="flex gap-3 items-center">
+			<span class="rotate-270 font-bold text-xl">↑</span>Back
+		</a>
 	</p>
 
-	<section class="mx-auto grid max-w-[1300px] grid-cols-1 gap-20 py-6 md:grid-cols-2 px-8">
+	<section class="mx-auto grid max-w-[1300px] grid-cols-1 gap-20 py-6 md:grid-cols-2 px-8 pb-40">
 		<!-- Product Image -->
 		<div class="lg:h-[900px] h-full">
 			<img
@@ -80,38 +135,32 @@
 			<!-- Quantity + Add to Cart -->
 			<div class="flex items-center gap-4">
 				<div class="flex w-[30%] items-center justify-between rounded-xl border border-[#306b86]">
-					<!-- Decrease -->
 					<button
-						class="h-14 w-12 cursor-pointer rounded-xl  text-2xl font-bold text-white hover:bg-[#1e4a61] transition"
+						class="h-14 w-12 cursor-pointer rounded-xl text-2xl font-bold text-white hover:bg-[#1e4a61] transition"
 						on:click={decrease}
 					>
 						−
 					</button>
-
-					<!-- Quantity Display -->
 					<span class="w-8 text-center text-xl font-normal">{quantity}</span>
-
-					<!-- Increase -->
 					<button
-						class="h-14 w-12 cursor-pointer  text-2xl font-bold text-white rounded-xl hover:bg-[#1e4a61] transition"
+						class="h-14 w-12 cursor-pointer text-2xl font-bold text-white rounded-xl hover:bg-[#1e4a61] transition"
 						on:click={increase}
 					>
 						+
 					</button>
 				</div>
 
-				<!-- Add to Cart -->
 				<button
 					class="h-14 w-[50%] flex-1 rounded-2xl bg-[#306b86] text-[16px] font-semibold
-    text-white uppercase transition-all duration-300
-    ease-in-out hover:scale-105 hover:bg-[#b8d6ee] hover:text-black"
+					text-white uppercase transition-all duration-300
+					ease-in-out hover:scale-105 hover:bg-[#b8d6ee] hover:text-black"
 					on:click={handleAddToCart}
 				>
 					Add to cart
 				</button>
 			</div>
 
-			<p class="mb-6 py-10 text-[16px] leading-7">{product.description}</p>
+			<p class="mb-6 py-10 text-[16px] leading-7 w-full break-words whitespace-normal">{product.description}</p>
 
 			<ul class="mb-6 space-y-2 text-gray-700">
 				<li><strong>Size:</strong> {product.details.size}</li>
@@ -119,11 +168,10 @@
 				<li><strong>Availability:</strong> {product.details.availability}</li>
 			</ul>
 
-			<!-- Share Button -->
 			<button
 				aria-label="Share"
 				class="mt-20 flex w-24 cursor-pointer items-center gap-2 rounded-xl
-         border border-[#306b86] px-4 py-2 capitalize transition hover:bg-[#306b86] hover:text-white"
+				border border-[#306b86] px-4 py-2 capitalize transition hover:bg-[#306b86] hover:text-white"
 				on:click={sharePage}
 			>
 				<svg
@@ -145,5 +193,5 @@
 		</div>
 	</section>
 {:else}
-	<p class="text-center text-gray-500">Product not found.</p>
+	<p class="text-center text-gray-500 py-20 text-2xl">Product not found.</p>
 {/if}
