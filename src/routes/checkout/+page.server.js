@@ -70,9 +70,9 @@ export const actions = {
 			});
 
 			// 2️⃣ Prepare HTML for items (for emails)
-			const itemListHTML = cartItems
-				.map(
-					(item) => `
+      const itemListHTML = cartItems
+        .map(
+          (item) => `
          <tr>
 						<td style="padding:8px;border:1px solid #ddd;">${item.title}</td>
 						<td style="padding:8px;border:1px solid #ddd;text-align:center;">${item.qty}</td>
@@ -80,10 +80,10 @@ export const actions = {
 						<td style="padding:8px;border:1px solid #ddd;text-align:right;">₦${(item.price * item.qty).toLocaleString()}.00</td>
 					</tr>
         `
-				)
-				.join('');
+        )
+        .join('');
 
-			const itemsTable = `
+     const itemsTable = `
 				<table style="border-collapse:collapse;width:100%;margin-top:10px;">
 					<thead>
 						<tr style="background:#f4f4f4;">
@@ -107,12 +107,12 @@ export const actions = {
 				</table>
       `;
 
-			// 3️⃣ Send email to Admin
-			await resend.emails.send({
-				from: 'orders@ezergallery.vercel.app',
-				to: ['awosojiemmanuel2019@gmail.com'], 
-				subject: `🛒 New Order from ${name}`,
-				html: `
+      // 3️⃣ Send email to Admin
+      await resend.emails.send({
+        from: 'onboarding@resend.dev', //testimg domain
+        to: ['awosojiemmanuel2019@gmail.com'],
+        subject: `🛒 New Order from ${name}`,
+        html: `
          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
 						<h2 style="color: #306b86;">New Order Received</h2>
 						<p><strong>Order ID:</strong> ${orderId}</p>
@@ -128,15 +128,15 @@ export const actions = {
 
 						<p><strong>Payment Method:</strong> ${paymentMethod}</p>
 					</div>
-        `
-			});
+        `,
+      });
 
-			// 4️⃣ Send email to Customer (confirmation)
-			await resend.emails.send({
-				from: 'orders@ezergallery.vercel.app',
-				to: [email],
-				subject: `✅ Order Confirmation - Thank you, ${name}!`,
-				html: `
+      // 4️⃣ Send email to Customer (confirmation)
+      await resend.emails.send({
+        from: 'onboarding@resend.dev', 
+        to: [email],
+        subject: `✅ Order Confirmation - Thank you, ${name}!`,
+        html: `
          	<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
 						<h2 style="color: #306b86;">Thank you for your order!</h2>
 						<p>Hi ${name},</p>
@@ -151,10 +151,10 @@ export const actions = {
 						<p style="margin-top: 30px;">We'll notify you when your items are shipped.</p>
 						<p>Warm regards,<br><strong>EZERGALLERY Team</strong></p>
 					</div>
-        `
-			});
+        `,
+      });
 
-			console.log(' Order saved and emails sent!');
+				console.log(' Order saved and emails sent!');
 
 			// Return success with order details
 			return {
