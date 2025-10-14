@@ -71,7 +71,7 @@
 			imageList = [...staticImages, ...sanityImages];
 		} catch (error) {
 			console.error(' Error loading Sanity portraits:', error);
-			imageList = staticImages; // fallback
+			imageList = staticImages; 
 		} finally {
 			loading = false;
 		}

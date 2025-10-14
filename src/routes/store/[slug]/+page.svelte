@@ -54,11 +54,11 @@
 						availability: data.availability || 'In Stock'
 					}
 				};
-				console.log('✅ Found Sanity product:', product.title);
+				console.log(' Found Sanity product:', product.title);
 			}
 
 		} catch (error) {
-			console.error('❌ Error loading product:', error);
+			console.error(' Error loading product:', error);
 		} finally {
 			loading = false;
 		}

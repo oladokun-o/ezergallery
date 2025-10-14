@@ -7,7 +7,7 @@
 	// Get hardcoded products
 	let staticProducts = get(products);
 
-	let productList = staticProducts; // Start with static products
+	let productList = staticProducts;
 	let loading = true;
 
 	onMount(async () => {
@@ -30,7 +30,7 @@
 			// Transform Sanity products
 			const sanityProducts = data.map(product => ({
 				...product,
-				id: product._id, // Use _id as id
+				id: product._id, 
 				image: product.image ? urlFor(product.image).width(800).url() : ''
 			}));
 

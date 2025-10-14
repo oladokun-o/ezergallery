@@ -31,14 +31,14 @@
 				image
 			}`);
 
-			console.log('Sanity images:', sanityImages); // Debug log
+			console.log('Sanity images:', sanityImages);
 
 			// Convert Sanity images to URLs
 			const sanityUrls = sanityImages
 				.filter(img => img.image) // Only process if image exists
 				.map(img => urlFor(img.image).width(1200).url());
 
-			console.log('Sanity URLs:', sanityUrls); // Debug log
+			console.log('Sanity URLs:', sanityUrls); 
 
 			// Combine with local images
 			combinedImages = [...localImages, ...sanityUrls, ...localImages];

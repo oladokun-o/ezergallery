@@ -58,7 +58,7 @@
 			imageList = [...staticImages, ...sanityImages];
 		} catch (error) {
 			console.error(' Error loading Sanity brands:', error);
-			imageList = staticImages; // fallback
+			imageList = staticImages; 
 		} finally {
 			loading = false;
 		}

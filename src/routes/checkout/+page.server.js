@@ -109,8 +109,8 @@ export const actions = {
 
 			// 3️⃣ Send email to Admin
 			await resend.emails.send({
-				from: 'onboarding@resend.dev',
-				to: ['awosojiemmanuel2019@gmail.com'], // your admin email
+				from: 'orders@ezergallery.vercel.app',
+				to: ['awosojiemmanuel2019@gmail.com'], 
 				subject: `🛒 New Order from ${name}`,
 				html: `
          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -133,7 +133,7 @@ export const actions = {
 
 			// 4️⃣ Send email to Customer (confirmation)
 			await resend.emails.send({
-				from: 'onboarding@resend.dev', 
+				from: 'orders@ezergallery.vercel.app',
 				to: [email],
 				subject: `✅ Order Confirmation - Thank you, ${name}!`,
 				html: `
