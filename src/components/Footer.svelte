@@ -34,6 +34,11 @@
 					class="transition duration-300 hover:text-[#306b86]
 				{$page.url.pathname === '/contact' ? 'text-[#306b86]' : ''}">Contact</a
 				>
+				<a
+					href="/events"
+					class="transition duration-300 hover:text-[#306b86]
+				{$page.url.pathname === '/events' ? 'text-[#306b86]' : ''}">Events</a
+				>
 			</div>
 
 			<!-- Contact & Socials -->
