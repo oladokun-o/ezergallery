@@ -80,7 +80,7 @@
 </section>
 
 <!-- Events Listing Section -->
-<section class="mx-auto max-w-[1300px] px-5 py-20">
+<section class="mx-auto max-w-[1300px] px-5 py-20 mb-10">
 	<!-- Filter Buttons -->
 	<div class="mb-10 flex flex-wrap justify-center gap-4">
 		<button
