@@ -2,9 +2,18 @@ import { defineType, defineField } from 'sanity'
 
 export const event = defineType({
   name: 'event',
-  title: 'Events',
+  title: 'Event',
   type: 'document',
   fields: [
+    // Hero Section
+    defineField({
+      name: 'heroImage',
+      title: 'Hero Image',
+      type: 'image',
+      options: { hotspot: true },
+      validation: (Rule) => Rule.required(),
+    }),
+    // Basic Info
     defineField({
       name: 'title',
       title: 'Event Title',
