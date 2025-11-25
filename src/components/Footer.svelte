@@ -34,13 +34,18 @@
 					class="transition duration-300 hover:text-[#306b86]
 				{$page.url.pathname === '/contact' ? 'text-[#306b86]' : ''}">Contact</a
 				>
+				<a
+					href="/events"
+					class="transition duration-300 hover:text-[#306b86]
+				{$page.url.pathname === '/events' ? 'text-[#306b86]' : ''}">Events</a
+				>
 			</div>
 
 			<!-- Contact & Socials -->
 			<div class="mt-10 flex flex-col space-y-3 lg:text-xl lg:mt-16">
 				<h3 class="mb-2 text-xl font-semibold text-white">Get in Touch</h3>
 				<a href="mailto:hello@ezergallery.com" class="transition duration-300 hover:text-[#306b86]">
-					hello@ezergallery.com
+					ezergallery@gmail.com
 				</a>
 
 				<div class="mx-auto mt-3 flex items-center space-x-4">
