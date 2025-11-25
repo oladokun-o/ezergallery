@@ -149,6 +149,18 @@
 			BOOK A PHOTOSHOOT
 		</a>
 
+		<a
+			href="/events"
+			class="relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2px]
+			       after:w-full after:origin-left after:scale-x-0 after:bg-[#306b86]
+			       after:transition-transform after:duration-300 hover:text-[#306b86]
+			       hover:after:scale-x-100
+			       {$page.url.pathname === '/events' ? 'text-[#306b86] after:scale-x-100' : ''}"
+			on:click={() => (isOpen = false)}
+		>
+			EVENTS
+		</a>
+
 		<div class="mx-auto mt-3 flex items-center space-x-4">
 			<a href="#" aria-label="Instagram" class="transition duration-300 hover:text-[#306b86]">
 				<svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
