@@ -5,6 +5,17 @@ export const event = defineType({
   title: 'Event',
   type: 'document',
   fields: [
+    // Slug
+    defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: {
+        source: 'title',
+        maxLength: 96,
+      },
+      validation: (Rule) => Rule.required(),
+    }),
     // Hero Section
     defineField({
       name: 'heroImage',
@@ -144,6 +155,12 @@ export const event = defineType({
       name: 'email',
       title: 'Contact Email',
       type: 'string',
+    }),
+    // Tickets
+    defineField({
+      name: 'ticketLink',
+      title: 'Ticket Link',
+      type: 'url',
     }),
   ],
   preview: {
