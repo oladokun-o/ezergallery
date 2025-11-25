@@ -8,6 +8,7 @@ import {contactSubmission} from './contactSubmission'
 import testimonial from './testimonial'
 import {latestPhotography} from './latestPhotography'
 import { order } from './order'
+import { event } from './event'
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   album,
@@ -19,4 +20,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   testimonial,
   latestPhotography,
   order,
+  event
 ]

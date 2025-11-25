@@ -33,6 +33,9 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
+		"@paystack/inline-js": "^2.22.7",
+		"@portabletext/svelte": "^3.0.1",
+		"@portabletext/to-html": "^4.0.1",
 		"@sanity/client": "^7.12.0",
 		"@sanity/image-url": "^1.2.0",
 		"resend": "^6.1.2",

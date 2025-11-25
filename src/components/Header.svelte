@@ -111,6 +111,15 @@
 				>BOOK A PHOTOSHOOT</a
 			>
 		</li>
+		<li>
+			<a
+				href="/events"
+				class="relative p-2 text-[14px]
+        {$page.url.pathname === '/events' ? 'text-[#306b86] after:w-full' : 'text-gray-300'}
+        after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#306b86] after:transition-all after:duration-300 after:content-[''] hover:text-[#306b86] hover:after:w-full"
+				>EVENTS</a
+			>
+		</li>
 	</ul>
 
 	<!-- Icons -->

@@ -133,7 +133,7 @@ export const actions = {
 
       // 4️⃣ Send email to Customer (confirmation)
       await resend.emails.send({
-        from: 'onboarding@resend.dev', 
+        from: 'onboarding@resend.dev',
         to: [email],
         subject: `✅ Order Confirmation - Thank you, ${name}!`,
         html: `
