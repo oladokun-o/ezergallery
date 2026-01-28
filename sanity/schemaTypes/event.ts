@@ -2,9 +2,29 @@ import { defineType, defineField } from 'sanity'
 
 export const event = defineType({
   name: 'event',
-  title: 'Events',
+  title: 'Event',
   type: 'document',
   fields: [
+    // Slug
+    defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: {
+        source: 'title',
+        maxLength: 96,
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    // Hero Section
+    defineField({
+      name: 'heroImage',
+      title: 'Hero Image',
+      type: 'image',
+      options: { hotspot: true },
+      validation: (Rule) => Rule.required(),
+    }),
+    // Basic Info
     defineField({
       name: 'title',
       title: 'Event Title',
@@ -135,6 +155,12 @@ export const event = defineType({
       name: 'email',
       title: 'Contact Email',
       type: 'string',
+    }),
+    // Tickets
+    defineField({
+      name: 'ticketLink',
+      title: 'Ticket Link',
+      type: 'url',
     }),
   ],
   preview: {
