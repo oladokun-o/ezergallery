@@ -9,6 +9,7 @@ import testimonial from './testimonial'
 import {latestPhotography} from './latestPhotography'
 import { order } from './order'
 import { event } from './event'
+import featuredProducts from './featuredProducts'
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   album,
@@ -20,5 +21,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   testimonial,
   latestPhotography,
   order,
-  event
+  event,
+  featuredProducts,
 ]

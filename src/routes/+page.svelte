@@ -1,13 +1,50 @@
 <script>
+	import { onMount } from 'svelte';
+	import { client, urlFor } from '$lib/sanity';
 	import Portrait from '$lib/assets/portrait.webp';
 	import Bloodlust from '$lib/assets/Blood lust.webp';
 	import Brand from '$lib/assets/brand.webp';
 	import Photographer from '$lib/assets/Tissue-Empire.webp';
 	import Wande from '$lib/assets/wande.webp';
 	import Train from '$lib/assets/train.webp';
-	import { products } from '$lib/stores/products';
-	import { get } from 'svelte/store';
-	let productList = get(products);
+
+	let featuredProducts = [];
+	let featuredSectionTitle = "Shop prints";
+	let loading = true;
+
+	onMount(async () => {
+		try {
+			// Fetch featured products configuration
+			const data = await client.fetch(`*[_type == "featuredProducts"] | order(displayOrder asc) [0] {
+				title,
+				products[]-> {
+					_id,
+					title,
+					"slug": slug.current,
+					price,
+					image,
+					description,
+					availability
+				}
+			}`);
+
+			if (data && data.products) {
+				featuredSectionTitle = data.title || "Shop prints";
+				featuredProducts = data.products.map(product => ({
+					...product,
+					id: product._id,
+					image: product.image ? urlFor(product.image).width(800).url() : ''
+				}));
+			}
+
+			console.log('✅ Featured products loaded:', featuredProducts.length);
+		} catch (error) {
+			console.error('❌ Error loading featured products:', error);
+			featuredProducts = [];
+		} finally {
+			loading = false;
+		}
+	});
 </script>
 
 <main class="flex flex-col gap-y-48 px-5 py-20 lg:px-20">
@@ -73,7 +110,7 @@
 		</div>
 	</section>
 	<!--======================== service section =====================-->
-	<section class="text-center flex flex-col justify-center gap-10">
+	<section class="flex flex-col justify-center gap-10 text-center">
 		<h2 class="text-[45px] capitalize">Services</h2>
 		<div class="justify-betweeen flex flex-col gap-10 md:grid md:grid-cols-2 lg:grid-cols-3">
 			<div class="overflow-hidden text-center">
@@ -174,11 +211,17 @@
 			>
 		</button>
 	</section>
-<!--=========== Shop Prints ==================================-->
+	<!--=========== Shop Prints ==================================-->
 	<section class="flex flex-col gap-10 pb-20 text-center">
-		<h2 class="text-[45px] capitalize">Shop prints</h2>
+	<h2 class="text-[45px] capitalize">{featuredSectionTitle}</h2>
+
+	{#if loading}
+		<div class="text-gray-500">Loading products...</div>
+	{:else if featuredProducts.length === 0}
+		<div class="text-gray-500">No featured products available</div>
+	{:else}
 		<section class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-			{#each productList.slice(0, 3) as product}
+			{#each featuredProducts as product}
 				<a
 					href={`/store/${product.slug}`}
 					class="group overflow-hidden shadow-lg transition hover:shadow-2xl"
@@ -195,12 +238,15 @@
 				</a>
 			{/each}
 		</section>
-		<button class="mx-auto mt-8"
-			><a
-				href="/store"
-				class="rounded-2xl bg-[#306b86] px-6 py-5 text-[16px] font-semibold transition duration-500 ease-in-out hover:scale-105 hover:bg-[#b8d6ee] hover:text-[#000000]"
-				>View all colloection</a
-			>
-		</button>
-	</section>
+	{/if}
+
+	<button class="mx-auto mt-8">
+		<a
+			href="/store"
+			class="rounded-2xl bg-[#306b86] px-6 py-5 text-[16px] font-semibold transition duration-500 ease-in-out hover:scale-105 hover:bg-[#b8d6ee] hover:text-[#000000]"
+		>
+			View all collection
+		</a>
+	</button>
+</section>
 </main>

@@ -1,19 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
-	import { products } from '$lib/stores/products';
-	import { get } from 'svelte/store';
 	import { client, urlFor } from '$lib/sanity';
 
-	// Get hardcoded products
-	let staticProducts = get(products);
-
-	let productList = staticProducts;
+	let productList = [];
 	let loading = true;
 
 	onMount(async () => {
 		try {
-			console.log(' Static products:', staticProducts.length);
-
 			// Fetch products from Sanity
 			const data = await client.fetch(`*[_type == "product"] | order(_createdAt desc) {
 				_id,
@@ -28,22 +21,16 @@
 			}`);
 
 			// Transform Sanity products
-			const sanityProducts = data.map(product => ({
+			productList = data.map(product => ({
 				...product,
-				id: product._id, 
+				id: product._id,
 				image: product.image ? urlFor(product.image).width(800).url() : ''
 			}));
 
-			console.log(' Sanity products:', sanityProducts.length);
-
-			// Combine: static products first, then Sanity products
-			productList = [...staticProducts, ...sanityProducts];
-
 			console.log('✅ Total products:', productList.length);
 		} catch (error) {
-			console.error(' Error loading Sanity products:', error);
-			// Keep static products only if Sanity fails
-			productList = staticProducts;
+			console.error('❌ Error loading Sanity products:', error);
+			productList = [];
 		} finally {
 			loading = false;
 		}
