@@ -80,5 +80,7 @@
 	<!-- Bottom Line -->
 	<div class="mt-10 border-t border-gray-700 pt-5 text-center text-sm text-gray-500">
 		&copy; {new Date().getFullYear()} Ezergallery. All rights reserved.
+		<span class="mx-2" aria-hidden="true">·</span>
+		<span>Built by <a href="https://nxtedgestudio.com/?utm_source=ezergallery.com&amp;utm_medium=referral&amp;utm_campaign=built_by&amp;utm_content=footer_credit" target="_blank" rel="noopener" class="transition duration-300 hover:text-[#306b86]">Nxtedge Studio</a></span>
 	</div>
 </footer>
